@@ -1,19 +1,43 @@
 package flowbit
+
+import java.util.Properties
+
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
+import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}
+import org.apache.kafka.common.config.TopicConfig
+import collection.JavaConverters._
 
-class FlowBitImpl extends FlowBit {
+/**
+  * Implementation of the FlowBit interface.
+  * Stores the topics in a set and units in a hashmap.
+  *
+  * @param server the server on which runs the pipeline.
+  */
+class FlowBitImpl(server: String) extends FlowBit {
   var topics = new HashSet[String]
   var units = new HashMap[String, Unit]
 
+  // Admin Client properties
+  val props = new Properties()
+  props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, server)
+
+  val adminClient = AdminClient.create(props)
+
+  // Topic configs
+  val topicConfigs = Map(TopicConfig.CLEANUP_POLICY_CONFIG -> TopicConfig.CLEANUP_POLICY_COMPACT,
+    TopicConfig.COMPRESSION_TYPE_CONFIG -> "gzip").asJava
 
   /**
     * Adds a new Kafka topic into the system.
     *
     * @param topic the topic to be added.
     */
-  override def addTopic(topic: String): Unit = {
+  override def addTopic(topic: String, partitions: Int, replicationFactor: Int): Unit = {
     topics.add(topic)
+    val t = new NewTopic(topic, partitions, replicationFactor.toShort)
+    t.configs(topicConfigs)
+    adminClient.createTopics(List(t).asJavaCollection)
   }
 
   /**
@@ -21,7 +45,9 @@ class FlowBitImpl extends FlowBit {
     *
     * @param topics list of topics.
     */
-  override def addTopics(topics: List[String]): Unit = ???
+  override def addTopics(topics: List[String], partitions: Int, replicationFactor: Int) = {
+
+  }
 
   /**
     * Creates a producer that sends the given data to the given list of topics.

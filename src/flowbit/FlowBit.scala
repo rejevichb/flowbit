@@ -11,18 +11,19 @@ import scala.collection.mutable.HashMap
 trait FlowBit {
 
   /**
-    * Adds a new Kafka topic into the system.
+    * Adds a new Kafka topic into the system with the given partition and replication factor.
     *
     * @param topic the topic to be added.
     */
-  def addTopic(topic: String): Unit
+  def addTopic(topic: String, partitions: Int, replicationFactor: Int): Unit
 
   /**
-    * Adds a list of new topics into the system.
+    * Adds a list of new topics into the system where each topic has the given partitions
+    * and replication factor.
     *
     * @param topics list of topics.
     */
-  def addTopics(topics: List[String]): Unit
+  def addTopics(topics: List[String], partitions: Int, replicationFactor: Int): Unit
 
   /**
     * Creates a producer that sends the given data to the given list of topics.
