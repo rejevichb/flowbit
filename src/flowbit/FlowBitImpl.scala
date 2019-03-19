@@ -45,8 +45,11 @@ class FlowBitImpl(server: String) extends FlowBit {
     *
     * @param topics list of topics.
     */
-  override def addTopics(topics: List[String], partitions: Int, replicationFactor: Int) = {
-
+  override def addTopics(ts: List[String], partitions: Int, replicationFactor: Int) = {
+    topics.++=(ts)
+    val listTopics = for (i <- 0 to ts.length;
+                          t = new NewTopic(ts(i), partitions, replicationFactor.toShort)) yield t
+    adminClient.createTopics(listTopics.asJavaCollection)
   }
 
   /**
