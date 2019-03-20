@@ -95,9 +95,9 @@ class FlowBitImpl(server: String) extends FlowBit {
     */
   override def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String],
                             pred: (A,B) => Boolean): Unit = {
-    val component = new FilterComponent(id, server, fromTopic, toTopic);
+    val component = new FilterComponent(id, server, fromTopic, toTopic, pred)
     this.components.put(id, component)
-    component.execute(pred)
+    component.execute()
   }
 
   /**
@@ -111,17 +111,23 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @tparam A the data type of the data to be processed.
     * @tparam B the data type of the processed data.
     */
-  override def addMap[A, B](id: String, fromTopic: String, toTopic: String, func: A => B): Unit = ???
+  override def addMap[A,B,C,D](id: String, fromTopic: String, toTopic: List[String],
+                               func: (A,B) => (C,D)): Unit = {
+    val component = new MapComponent(id, server, fromTopic, toTopic, func)
+    this.components.put(id, component)
+    component.execute()
+  }
 
   /**
-    * Creates a consumer that returns the data from a given topic as a list.
+    * Creates a consumer that fetches the data from a given topic and writes it to a given path.
     *
     * @param id    the id of the consumer.
     * @param topic the topic from which to get the values from.
-    * @tparam A the data type of the values to be retrieved.
-    * @return the values as a list
+    * @param filePath the path to write to.
     */
-  override def getConsumer[A](id: String, topic: String): List[A] = ???
+  override def getConsumer(id: String, topic: String, filePath: String): Unit = {
+    
+  }
 
   /**
     * Removes a unit from the pipeline.
