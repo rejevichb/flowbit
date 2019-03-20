@@ -43,9 +43,10 @@ trait FlowBit {
     * @param fromTopic the topic to which to subscribe to.
     * @param toTopic the topic to which to publish to.
     * @param pred the predicate of the filter.
-    * @tparam A the values beings processed.
+    * @tparam A the type of the keys to be processed.
+    * @tparam B the type of the values to be processed.
     */
-  def addFilter[A](id: String, fromTopic: String, toTopic: String, pred: (A) => Boolean): Unit
+  def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String], pred: (A,B) => Boolean): Unit
 
   /**
     * Adds a new map unit that executes a map {@code func} on a stream of data from a given

@@ -5,28 +5,40 @@ import java.util.Properties
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
 import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.config.TopicConfig
+import org.apache.kafka.streams.scala.Serdes
+import org.apache.kafka.streams.scala.ImplicitConversions._
+import org.apache.kafka.streams.{KafkaStreams, StreamsBuilder, StreamsConfig}
+import org.apache.kafka.streams.scala.kstream.{KStream, Produced}
+
 import collection.JavaConverters._
 
 /**
   * Implementation of the FlowBit interface.
-  * Stores the topics in a set and units in a hashmap.
+  * Stores the topics in a set and components in a hashmap.
   *
   * @param server the server on which runs the pipeline.
   */
 class FlowBitImpl(server: String) extends FlowBit {
   var topics = new HashSet[String]
-  var units = new HashMap[String, Unit]
+  var components = new HashMap[String, Component]
 
   // Admin Client properties
-  val props = new Properties()
-  props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, server)
+  val adminProps = new Properties()
+  adminProps.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, server)
 
-  val adminClient = AdminClient.create(props)
+  val adminClient = AdminClient.create(adminProps)
 
   // Topic configs
   val topicConfigs = Map(TopicConfig.CLEANUP_POLICY_CONFIG -> TopicConfig.CLEANUP_POLICY_COMPACT,
     TopicConfig.COMPRESSION_TYPE_CONFIG -> "gzip").asJava
+
+  // Producer configs
+  val prodProps = new Properties()
+  prodProps.put("bootstrap.servers", server)
+  prodProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  prodProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
 
   /**
     * Adds a new Kafka topic into the system.
@@ -60,7 +72,15 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @tparam A the key data type
     * @tparam B the value data type
     */
-  override def sendData[A, B](data: HashMap[A, B], topics: List[String]): Unit = ???
+  override def sendData[A, B](data: HashMap[A, B], tpcs: List[String]): Unit = {
+    val producer = new KafkaProducer[A,B](prodProps)
+    data.foreach[Unit](((d) =>
+      for (t <- tpcs) {
+        producer.send(new ProducerRecord[A, B](t, d._1, d._2))
+      }))
+    producer.flush()
+    producer.close()
+  }
 
   /**
     * Adds a new filter unit that filters the streams of data from a given {@code fromTopic}
@@ -70,9 +90,15 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @param fromTopic the topic to which to subscribe to.
     * @param toTopic   the topic to which to publish to.
     * @param pred      the predicate of the filter.
-    * @tparam A the values beings processed.
+    * @tparam A the type of the keys to be processed.
+    * @tparam B the type of the values to be processed.
     */
-  override def addFilter[A](id: String, fromTopic: String, toTopic: String, pred: A => Boolean): Unit = ???
+  override def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String],
+                            pred: (A,B) => Boolean): Unit = {
+    val component = new FilterComponent(id, server, fromTopic, toTopic);
+    this.components.put(id, component)
+    component.execute(pred)
+  }
 
   /**
     * Adds a new map unit that executes a map {@code func} on a stream of data from a given
