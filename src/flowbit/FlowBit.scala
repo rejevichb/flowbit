@@ -1,7 +1,5 @@
 package flowbit
 
-import scala.collection.mutable.HashMap
-
 /**
   * Flowbit API to build customized ETL pipelines using Kafka.
   * How to use:
@@ -26,14 +24,16 @@ trait FlowBit {
   def addTopics(topics: List[String], partitions: Int, replicationFactor: Int): Unit
 
   /**
-    * Creates a producer that sends the given data to the given list of topics.
+    * Creates a producer that sends the data from the given {@link Source} to the given list of
+    * topics.
     *
-    * @param data the data to be sent into the pipeline.
-    * @param topics the topics to which to send the data.
+    * @param id the id of this component.
+    * @param source the source of the data.
+    * @param toTopics the topics to which to send the data.
     * @tparam A the key data type
     * @tparam B the value data type
     */
-  def sendData[A,B](data: HashMap[A,B], topics: List[String]): Unit
+  def addProducer[A,B](id: String, source: Source[A,B], toTopics: List[String]): Unit
 
   /**
     * Adds a new filter unit that filters the streams of data from a given {@code fromTopic}

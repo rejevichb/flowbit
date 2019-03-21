@@ -34,12 +34,6 @@ class FlowBitImpl(server: String) extends FlowBit {
   val topicConfigs = Map(TopicConfig.CLEANUP_POLICY_CONFIG -> TopicConfig.CLEANUP_POLICY_COMPACT,
     TopicConfig.COMPRESSION_TYPE_CONFIG -> "gzip").asJava
 
-  // Producer configs
-  val prodProps = new Properties()
-  prodProps.put("bootstrap.servers", server)
-  prodProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-  prodProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-
   /**
     * Adds a new Kafka topic into the system.
     *
@@ -65,21 +59,19 @@ class FlowBitImpl(server: String) extends FlowBit {
   }
 
   /**
-    * Creates a producer that sends the given data to the given list of topics.
+    * Creates a producer that sends the data from the given {@link Source} to the given list of
+    * topics.
     *
-    * @param data   the data to be sent into the pipeline.
+    * @param id the id of this component.
+    * @param source the source of the data.
     * @param topics the topics to which to send the data.
     * @tparam A the key data type
     * @tparam B the value data type
     */
-  override def sendData[A, B](data: HashMap[A, B], tpcs: List[String]): Unit = {
-    val producer = new KafkaProducer[A,B](prodProps)
-    data.foreach[Unit](((d) =>
-      for (t <- tpcs) {
-        producer.send(new ProducerRecord[A, B](t, d._1, d._2))
-      }))
-    producer.flush()
-    producer.close()
+  override def addProducer[A,B](id: String, source: Source[A,B], toTopics: List[String]): Unit = {
+    val component = new ProducerComponent(id, server, source, toTopics)
+    this.components.put(id, component)
+    component.execute()
   }
 
   /**
@@ -126,7 +118,9 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @param filePath the path to write to.
     */
   override def getConsumer(id: String, topic: String, filePath: String): Unit = {
-    
+    val component = new ConsumerComponent(id, server, filePath, topic)
+    this.components.put(id, component)
+    component.execute()
   }
 
   /**

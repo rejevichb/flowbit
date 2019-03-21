@@ -10,10 +10,12 @@ import org.apache.kafka.streams.scala.ImplicitConversions._
 final class MapComponent[A,B,C,D](id: String, server: String, fromTopic: String,
                               toTopic: List[String], func: (A,B) => (C,D)) extends Component {
 
+  // Map configs
+  val streamProps = new Properties()
+  streamProps.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, server)
+  streamProps.put(StreamsConfig.APPLICATION_ID_CONFIG, id)
+
   override def execute(): Unit = {
-    val streamProps = new Properties()
-    streamProps.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, server)
-    streamProps.put(StreamsConfig.APPLICATION_ID_CONFIG, id)
 
     val builder: StreamsBuilder = new StreamsBuilder()
     val stream: KStream[A, B] = builder.stream[A, B](fromTopic)
