@@ -115,10 +115,13 @@ class FlowBitImpl(server: String) extends FlowBit {
     *
     * @param id    the id of the consumer.
     * @param topic the topic from which to get the values from.
+    * @param groupId the id of the group that this consumer is subscribed to.
+    * @param dest the destination to which to send the data.
     * @param filePath the path to write to.
     */
-  override def getConsumer(id: String, topic: String, filePath: String): Unit = {
-    val component = new ConsumerComponent(id, server, filePath, topic)
+  override def getConsumer[A,B](id: String, topic: String, groupId: String,
+                                dest: Source[A,B], filePath: String): Unit = {
+    val component = new ConsumerComponent(id, server, dest, topic, groupId)
     this.components.put(id, component)
     component.execute()
   }

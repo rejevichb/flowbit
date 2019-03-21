@@ -7,12 +7,10 @@ import org.apache.kafka.streams.scala.kstream.{KStream, Produced}
 import org.apache.kafka.streams.scala.ImplicitConversions._
 
 final class FilterComponent[A,B](id: String, server: String, fromTopic: String,
-                                 toTopic: List[String], pred: (A,B) => Boolean) extends Component {
+                                 toTopic: List[String], pred: (A,B) => Boolean) extends AbsComponent(id, server) {
 
-  // Stream configs
-  val streamProps = new Properties()
-  streamProps.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, server)
-  streamProps.put(StreamsConfig.APPLICATION_ID_CONFIG, id)
+  // Filter-specific configs
+  properties.put(StreamsConfig.APPLICATION_ID_CONFIG, id)
 
   override def execute(): Unit = {
 
@@ -23,7 +21,7 @@ final class FilterComponent[A,B](id: String, server: String, fromTopic: String,
       filteredStream.to(t)(new Produced[A,B])
     }
 
-    val streams: KafkaStreams = new KafkaStreams(builder.build(), streamProps)
+    val streams: KafkaStreams = new KafkaStreams(builder.build(), properties)
     streams.start()
 
     sys.ShutdownHookThread {

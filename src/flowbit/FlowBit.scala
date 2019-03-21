@@ -62,13 +62,16 @@ trait FlowBit {
   def addMap[A,B,C,D](id: String, fromTopic: String, toTopic: List[String], func: (A,B) => (C,D)): Unit
 
   /**
-    * Creates a consumer that fetches the data from a given topic and writes it to a given path.
+    * Creates a consumer that fetches the data from a given topic and sends it to a given
+    * {@link Source} destination.
     *
     * @param id the id of the consumer.
     * @param topic the topic from which to get the values from.
+    * @param groupId the id of the group that this consumer is subscribed to.
+    * @param dest the destination to which to send the data.
     * @param filePath the path to write to.
     */
-  def getConsumer(id: String, topic: String, filePath: String): Unit
+  def getConsumer[A,B](id: String, topic: String, groupId: String, dest: Source[A,B], filePath: String): Unit
 
   /**
     * Removes a unit from the pipeline.

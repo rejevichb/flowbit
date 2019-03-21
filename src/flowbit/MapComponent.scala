@@ -8,12 +8,10 @@ import org.apache.kafka.streams.scala.ImplicitConversions._
 
 
 final class MapComponent[A,B,C,D](id: String, server: String, fromTopic: String,
-                              toTopic: List[String], func: (A,B) => (C,D)) extends Component {
+                                  toTopic: List[String], func: (A,B) => (C,D)) extends AbsComponent(id, server) {
 
-  // Map configs
-  val streamProps = new Properties()
-  streamProps.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, server)
-  streamProps.put(StreamsConfig.APPLICATION_ID_CONFIG, id)
+  // Map-specific configs
+  properties.put(StreamsConfig.APPLICATION_ID_CONFIG, id)
 
   override def execute(): Unit = {
 
@@ -24,7 +22,7 @@ final class MapComponent[A,B,C,D](id: String, server: String, fromTopic: String,
       filteredStream.to(t)(new Produced[C,D])
     }
 
-    val streams: KafkaStreams = new KafkaStreams(builder.build(), streamProps)
+    val streams: KafkaStreams = new KafkaStreams(builder.build(), properties)
     streams.start()
 
     sys.ShutdownHookThread {
