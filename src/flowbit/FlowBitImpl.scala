@@ -6,7 +6,8 @@ import scala.collection.immutable.HashMap
 import scala.collection.immutable.HashSet
 import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}
 import org.apache.kafka.common.config.TopicConfig
-
+import org.apache.kafka.streams.KeyValue
+import org.apache.kafka.streams.kstream.{KeyValueMapper, Predicate}
 
 import collection.JavaConverters._
 
@@ -49,7 +50,7 @@ class FlowBitImpl(server: String) extends FlowBit {
     */
   override def addTopics(ts: List[String], partitions: Int, replicationFactor: Int) = {
     this.topics = this.topics ++ ts
-    val listTopics = for (i <- 0 to ts.length;
+    var listTopics = for (i <- 0 until ts.length;
                           t = new NewTopic(ts(i), partitions, replicationFactor.toShort)) yield t
     this.adminClient.createTopics(listTopics.asJavaCollection)
   }
@@ -82,7 +83,7 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @tparam B the type of the values to be processed.
     */
   override def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String],
-                            pred: (A,B) => Boolean): Unit = {
+                            pred: Predicate[A,B]): Unit = {
     val component = new FilterComponent(id, server, fromTopic, toTopic, pred)
     this.components = this.components + (id -> component)
     component.execute()
@@ -100,7 +101,7 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @tparam B the data type of the processed data.
     */
   override def addMap[A,B,C,D](id: String, fromTopic: String, toTopic: List[String],
-                               func: (A,B) => (C,D)): Unit = {
+                               func: KeyValueMapper[A,B,KeyValue[C,D]]): Unit = {
     val component = new MapComponent(id, server, fromTopic, toTopic, func)
     this.components = this.components + (id -> component)
     component.execute()
@@ -113,10 +114,9 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @param topic the topic from which to get the values from.
     * @param groupId the id of the group that this consumer is subscribed to.
     * @param dest the destination to which to send the data.
-    * @param filePath the path to write to.
     */
-  override def getConsumer[A,B](id: String, topic: String, groupId: String,
-                                dest: Source[A,B], filePath: String): Unit = {
+  override def addConsumer[A,B](id: String, topic: String, groupId: String,
+                                dest: Source[A,B]): Unit = {
     val component = new ConsumerComponent(id, server, dest, topic, groupId)
     this.components = this.components + (id -> component)
     component.execute()

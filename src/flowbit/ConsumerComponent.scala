@@ -29,7 +29,7 @@ class ConsumerComponent[A,B](id: String, server: String, dest: Source[A,B], topi
       if (records.count() == 0) noRecordsCount += 1
 
       var map = new HashMap[A,B]().empty
-      records.forEach((r) => map = map.+((r.key(), r.value())))
+      records.forEach((r) => map = map + ((r.key() -> r.value())))
       dest.putData(map)
 
       // Commit offset returned by last poll call

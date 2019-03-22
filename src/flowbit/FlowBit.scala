@@ -1,5 +1,8 @@
 package flowbit
 
+import org.apache.kafka.streams.KeyValue
+import org.apache.kafka.streams.kstream.{KeyValueMapper, Predicate}
+
 /**
   * Flowbit API to build customized ETL pipelines using Kafka.
   * How to use:
@@ -46,7 +49,7 @@ trait FlowBit {
     * @tparam A the type of the keys to be processed.
     * @tparam B the type of the values to be processed.
     */
-  def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String], pred: (A,B) => Boolean): Unit
+  def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String], pred: Predicate[A,B]): Unit
 
   /**
     * Adds a new map unit that executes a map {@code func} on a stream of data from a given
@@ -59,7 +62,7 @@ trait FlowBit {
     * @tparam A the data type of the data to be processed.
     * @tparam B the data type of the processed data.
     */
-  def addMap[A,B,C,D](id: String, fromTopic: String, toTopic: List[String], func: (A,B) => (C,D)): Unit
+  def addMap[A,B,C,D](id: String, fromTopic: String, toTopic: List[String], func: KeyValueMapper[A,B,KeyValue[C,D]]): Unit
 
   /**
     * Creates a consumer that fetches the data from a given topic and sends it to a given
@@ -69,9 +72,8 @@ trait FlowBit {
     * @param topic the topic from which to get the values from.
     * @param groupId the id of the group that this consumer is subscribed to.
     * @param dest the destination to which to send the data.
-    * @param filePath the path to write to.
     */
-  def getConsumer[A,B](id: String, topic: String, groupId: String, dest: Source[A,B], filePath: String): Unit
+  def addConsumer[A,B](id: String, topic: String, groupId: String, dest: Source[A,B]): Unit
 
   /**
     * Prints the list of all units ids in this pipeline.
