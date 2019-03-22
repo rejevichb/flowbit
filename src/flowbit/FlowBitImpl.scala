@@ -2,15 +2,11 @@ package flowbit
 
 import java.util.Properties
 
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.HashSet
+import scala.collection.immutable.HashMap
+import scala.collection.immutable.HashSet
 import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.apache.kafka.common.config.TopicConfig
-import org.apache.kafka.streams.scala.Serdes
-import org.apache.kafka.streams.scala.ImplicitConversions._
-import org.apache.kafka.streams.{KafkaStreams, StreamsBuilder, StreamsConfig}
-import org.apache.kafka.streams.scala.kstream.{KStream, Produced}
+
 
 import collection.JavaConverters._
 
@@ -22,7 +18,7 @@ import collection.JavaConverters._
   */
 class FlowBitImpl(server: String) extends FlowBit {
   var topics = new HashSet[String]
-  var components = new HashMap[String, Component]
+  var components = new HashMap[String, Component]().empty
 
   // Admin Client properties
   val adminProps = new Properties()
@@ -40,10 +36,10 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @param topic the topic to be added.
     */
   override def addTopic(topic: String, partitions: Int, replicationFactor: Int): Unit = {
-    topics.add(topic)
+    this.topics = this.topics + topic
     val t = new NewTopic(topic, partitions, replicationFactor.toShort)
-    t.configs(topicConfigs)
-    adminClient.createTopics(List(t).asJavaCollection)
+    t.configs(this.topicConfigs)
+    this.adminClient.createTopics(List(t).asJavaCollection)
   }
 
   /**
@@ -52,10 +48,10 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @param topics list of topics.
     */
   override def addTopics(ts: List[String], partitions: Int, replicationFactor: Int) = {
-    topics.++=(ts)
+    this.topics = this.topics ++ ts
     val listTopics = for (i <- 0 to ts.length;
                           t = new NewTopic(ts(i), partitions, replicationFactor.toShort)) yield t
-    adminClient.createTopics(listTopics.asJavaCollection)
+    this.adminClient.createTopics(listTopics.asJavaCollection)
   }
 
   /**
@@ -70,7 +66,7 @@ class FlowBitImpl(server: String) extends FlowBit {
     */
   override def addProducer[A,B](id: String, source: Source[A,B], toTopics: List[String]): Unit = {
     val component = new ProducerComponent(id, server, source, toTopics)
-    this.components.put(id, component)
+    this.components = this.components + (id -> component)
     component.execute()
   }
 
@@ -88,7 +84,7 @@ class FlowBitImpl(server: String) extends FlowBit {
   override def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String],
                             pred: (A,B) => Boolean): Unit = {
     val component = new FilterComponent(id, server, fromTopic, toTopic, pred)
-    this.components.put(id, component)
+    this.components = this.components + (id -> component)
     component.execute()
   }
 
@@ -106,7 +102,7 @@ class FlowBitImpl(server: String) extends FlowBit {
   override def addMap[A,B,C,D](id: String, fromTopic: String, toTopic: List[String],
                                func: (A,B) => (C,D)): Unit = {
     val component = new MapComponent(id, server, fromTopic, toTopic, func)
-    this.components.put(id, component)
+    this.components = this.components + (id -> component)
     component.execute()
   }
 
@@ -122,28 +118,21 @@ class FlowBitImpl(server: String) extends FlowBit {
   override def getConsumer[A,B](id: String, topic: String, groupId: String,
                                 dest: Source[A,B], filePath: String): Unit = {
     val component = new ConsumerComponent(id, server, dest, topic, groupId)
-    this.components.put(id, component)
+    this.components = this.components + (id -> component)
     component.execute()
   }
 
   /**
-    * Removes a unit from the pipeline.
-    *
-    * @param id the id of the unit.
+    * Prints the list of all units ids in this pipeline.
     */
-  override def removeUnit(id: String): Unit = ???
+  override def getUnits(): Unit = {
+    components.foreach[Unit]((pair) => println(pair._1))
+  }
 
   /**
-    * Returns the list of all units ids in this pipeline.
-    *
-    * @return the list of units ids.
+    * Prints the list of all topics in this pipeline.
     */
-  override def getUnits(): List[String] = ???
-
-  /**
-    * Returns the list of all topics in this pipeline.
-    *
-    * @return the list of topics.
-    */
-  override def getTopics(): List[String] = ???
+  override def getTopics(): Unit = {
+    topics.foreach(t => println(t))
+  }
 }

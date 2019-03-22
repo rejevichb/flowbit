@@ -74,23 +74,12 @@ trait FlowBit {
   def getConsumer[A,B](id: String, topic: String, groupId: String, dest: Source[A,B], filePath: String): Unit
 
   /**
-    * Removes a unit from the pipeline.
-    *
-    * @param id the id of the unit.
+    * Prints the list of all units ids in this pipeline.
     */
-  def removeUnit(id: String): Unit
+  def getUnits(): Unit
 
   /**
-    * Returns the list of all units ids in this pipeline.
-    *
-    * @return the list of units ids.
+    * Prints the list of all topics in this pipeline.
     */
-  def getUnits(): List[String]
-
-  /**
-    * Returns the list of all topics in this pipeline.
-    *
-    * @return the list of topics.
-    */
-  def getTopics(): List[String]
+  def getTopics(): Unit
 }

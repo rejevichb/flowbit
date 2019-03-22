@@ -12,7 +12,7 @@ class ConsumerComponent[A,B](id: String, server: String, dest: Source[A,B], topi
   final val giveUp = 100
   var noRecordsCount = 0
 
-  // Consumer specific properties
+  // Consumer-specific properties
   properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
   properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
   properties.put("group.id", groupId)

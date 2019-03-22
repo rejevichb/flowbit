@@ -1,7 +1,5 @@
 package flowbit
 
-import java.util.Properties
-
 import org.apache.kafka.streams.{KafkaStreams, StreamsBuilder, StreamsConfig}
 import org.apache.kafka.streams.scala.kstream.{KStream, Produced}
 import org.apache.kafka.streams.scala.ImplicitConversions._
