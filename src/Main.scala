@@ -1,38 +1,43 @@
-import java.util.Properties
-
-import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}
-import collection.JavaConverters._
-
-import org.apache.kafka.common.config.TopicConfig
+import flowbit.{FlowBitImpl, TestSource}
+import org.apache.kafka.streams.KeyValue
+import org.apache.kafka.streams.kstream.Predicate
 
 object Main {
 
   def main(args: Array[String]): Unit = {
 
-    val props = new Properties()
-    props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+    val flowbit = new FlowBitImpl("localhost:9092")
 
-    val adminClient = AdminClient.create(props)
+    println("there should be no topics in the flowbit")
+    flowbit.getTopics()
 
-    val numPartitions = 1
-    val replicationFactor = 1.toShort
-    val newTopic = new NewTopic("unprocessed", numPartitions, replicationFactor)
-    val newTopic2 = new NewTopic("processed", numPartitions, replicationFactor)
-    val configs = Map(TopicConfig.CLEANUP_POLICY_CONFIG -> TopicConfig.CLEANUP_POLICY_COMPACT,
-      TopicConfig.COMPRESSION_TYPE_CONFIG -> "gzip")
-    // settings some configs
-    newTopic.configs(configs.asJava)
-    newTopic2.configs(configs.asJava)
-    adminClient.createTopics(List(newTopic, newTopic2).asJavaCollection)
-    adminClient.close()
+    println("adding topics")
+    flowbit.addTopics(List("toBeFiltered", "toBeMapped", "done"), 1, 1)
 
-    val producer = new ProducerTest("unprocessed")
-    producer.send()
-    val streamer = new StreamerTest("unprocessed", "processed")
-    streamer.stream()
-    val consumer = new ConsumerTest("concat00", List("processed"),
-      "/Users/danijj/Desktop/DANI/projects/flowbit/output.txt")
-    consumer.consume()
+    println("there should be 3 topics")
+    flowbit.getTopics()
+
+    val source = new TestSource
+    println("adding producer")
+    flowbit.addProducer[String, String]("producer1", source, List("toBeFiltered"))
+
+    println("adding filter")
+    flowbit.addFilter[String, String]("filter1", "toBeFiltered", List("toBeMapped"),
+      new Pred())
+
+    println("adding map")
+    flowbit.addMap[String, String, String, String]("map1", "toBeMapped", List("done"),
+      (k,v) => new KeyValue(k, v + (v.last.toInt * 10).toString))
+
+    println("adding consumer")
+    flowbit.addConsumer[String, String]("consumer1", "done", "group1", source)
+
   }
 
+}
+
+class Pred extends Predicate[String, String] {
+  override def test(k: String, v: String): Boolean = {
+    k.last.toInt % 2 == 0
+  }
 }
