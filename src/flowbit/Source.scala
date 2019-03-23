@@ -1,16 +1,19 @@
 package flowbit
 
-import scala.collection.immutable.HashMap
-
 /**
-  * Temp trait representing source and sink of the data for the pipeline.
-  * @tparam A
-  * @tparam B
+  * Trait representing a source of data.
+  *
+  * @tparam K {type of record key}
+  * @tparam V {type of record value}
   */
-trait Source[A,B] {
+trait Source[K, V] {
 
-  def getData(): HashMap[A,B]
-
-  def putData[A,B](data: HashMap[A,B]): Unit
+  /** *
+    * Polls the data source for records which come in the form of mappings
+    * from key to value.
+    *
+    * @return a stream of the maps.
+    */
+  def poll: Stream[(K, V)]
 
 }

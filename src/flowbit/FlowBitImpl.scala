@@ -50,7 +50,7 @@ class FlowBitImpl(server: String) extends FlowBit {
     */
   override def addTopics(ts: List[String], partitions: Int, replicationFactor: Int) = {
     this.topics = this.topics ++ ts
-    var listTopics = for (i <- 0 until ts.length;
+    val listTopics = for (i <- 0 until ts.length;
                           t = new NewTopic(ts(i), partitions, replicationFactor.toShort)) yield t
     this.adminClient.createTopics(listTopics.asJavaCollection)
   }
@@ -116,7 +116,7 @@ class FlowBitImpl(server: String) extends FlowBit {
     * @param dest the destination to which to send the data.
     */
   override def addConsumer[A,B](id: String, topic: String, groupId: String,
-                                dest: Source[A,B]): Unit = {
+                                dest: Destination[A, B]): Unit = {
     val component = new ConsumerComponent(id, server, dest, topic, groupId)
     this.components = this.components + (id -> component)
     component.execute()
