@@ -1,6 +1,6 @@
-import flowbit.{FlowBitImpl, TestSource}
+import flowbit.endpoints.{TestDestination, TestSource}
+import flowbit.FlowBitImpl
 import org.apache.kafka.streams.KeyValue
-import org.apache.kafka.streams.kstream.Predicate
 
 object Main {
 
@@ -23,21 +23,15 @@ object Main {
 
     println("adding filter")
     flowbit.addFilter[String, String]("filter1", "toBeFiltered", List("toBeMapped"),
-      new Pred())
+      (k, v) => k.last.toInt % 2 == 0)
 
     println("adding map")
     flowbit.addMap[String, String, String, String]("map1", "toBeMapped", List("done"),
       (k,v) => new KeyValue(k, v + (v.last.toInt * 10).toString))
 
+    val dest = new TestDestination
     println("adding consumer")
-    flowbit.addConsumer[String, String]("consumer1", "done", "group1", source)
-
+    flowbit.addConsumer[String, String]("consumer1", "done", "group1", dest)
   }
 
-}
-
-class Pred extends Predicate[String, String] {
-  override def test(k: String, v: String): Boolean = {
-    k.last.toInt % 2 == 0
-  }
 }

@@ -1,5 +1,6 @@
 package flowbit
 
+import flowbit.endpoints.{Destination, Source}
 import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.kstream.{KeyValueMapper, Predicate}
 
@@ -66,14 +67,14 @@ trait FlowBit {
 
   /**
     * Creates a consumer that fetches the data from a given topic and sends it to a given
-    * {@link Source} destination.
+    * {@link Destination} destination.
     *
     * @param id the id of the consumer.
     * @param topic the topic from which to get the values from.
     * @param groupId the id of the group that this consumer is subscribed to.
     * @param dest the destination to which to send the data.
     */
-  def addConsumer[A,B](id: String, topic: String, groupId: String, dest: Source[A,B]): Unit
+  def addConsumer[A,B](id: String, topic: String, groupId: String, dest: Destination[A, B]): Unit
 
   /**
     * Prints the list of all units ids in this pipeline.
