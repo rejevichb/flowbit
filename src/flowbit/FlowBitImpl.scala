@@ -2,6 +2,8 @@ package flowbit
 
 import java.util.Properties
 
+import flowbit.endpoints.{Destination, Source}
+
 import scala.collection.immutable.HashMap
 import scala.collection.immutable.HashSet
 import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, NewTopic}

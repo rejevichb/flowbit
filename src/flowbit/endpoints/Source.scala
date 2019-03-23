@@ -1,4 +1,4 @@
-package flowbit
+package flowbit.endpoints
 
 /**
   * Trait representing a source of data.

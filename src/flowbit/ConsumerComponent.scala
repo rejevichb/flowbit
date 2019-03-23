@@ -2,8 +2,9 @@ package flowbit
 
 import java.time.Duration
 
-import scala.collection.immutable.HashMap
+import flowbit.endpoints.Destination
 import org.apache.kafka.clients.consumer.KafkaConsumer
+
 import collection.JavaConverters._
 
 class ConsumerComponent[A,B](id: String, server: String, dest: Destination[A,B], topic: String, groupId: String)

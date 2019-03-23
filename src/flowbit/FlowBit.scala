@@ -1,5 +1,6 @@
 package flowbit
 
+import flowbit.endpoints.{Destination, Source}
 import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.kstream.{KeyValueMapper, Predicate}
 

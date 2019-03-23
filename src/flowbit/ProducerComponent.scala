@@ -1,5 +1,6 @@
 package flowbit
 
+import flowbit.endpoints.Source
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 class ProducerComponent[A, B](id: String, server: String, source: Source[A, B], toTopics: List[String])
