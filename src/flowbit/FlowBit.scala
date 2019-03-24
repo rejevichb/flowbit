@@ -1,6 +1,8 @@
 package flowbit
 
-import scala.collection.immutable.HashMap
+import flowbit.endpoints.{Destination, Source}
+import org.apache.kafka.streams.KeyValue
+import org.apache.kafka.streams.kstream.{KeyValueMapper, Predicate}
 
 /**
   * Flowbit API to build customized ETL pipelines using Kafka.
@@ -11,28 +13,31 @@ import scala.collection.immutable.HashMap
 trait FlowBit {
 
   /**
-    * Adds a new Kafka topic into the system.
+    * Adds a new Kafka topic into the system with the given partition and replication factor.
     *
     * @param topic the topic to be added.
     */
-  def addTopic(topic: String): Unit
+  def addTopic(topic: String, partitions: Int, replicationFactor: Int): Unit
 
   /**
-    * Adds a list of new topics into the system.
+    * Adds a list of new topics into the system where each topic has the given partitions
+    * and replication factor.
     *
     * @param topics list of topics.
     */
-  def addTopics(topics: List[String]): Unit
+  def addTopics(topics: List[String], partitions: Int, replicationFactor: Int): Unit
 
   /**
-    * Creates a producer that sends the given data to the given list of topics.
+    * Creates a producer that sends the data from the given {@link Source} to the given list of
+    * topics.
     *
-    * @param data the data to be sent into the pipeline.
-    * @param topics the topics to which to send the data.
+    * @param id the id of this component.
+    * @param source the source of the data.
+    * @param toTopics the topics to which to send the data.
     * @tparam A the key data type
     * @tparam B the value data type
     */
-  def sendData[A,B](data: HashMap[A,B], topics: List[String]): Unit
+  def addProducer[A,B](id: String, source: Source[A,B], toTopics: List[String]): Unit
 
   /**
     * Adds a new filter unit that filters the streams of data from a given {@code fromTopic}
@@ -42,9 +47,10 @@ trait FlowBit {
     * @param fromTopic the topic to which to subscribe to.
     * @param toTopic the topic to which to publish to.
     * @param pred the predicate of the filter.
-    * @tparam A the values beings processed.
+    * @tparam A the type of the keys to be processed.
+    * @tparam B the type of the values to be processed.
     */
-  def addFilter[A](id: String, fromTopic: String, toTopic: String, pred: (A) => Boolean): Unit
+  def addFilter[A,B](id: String, fromTopic: String, toTopic: List[String], pred: Predicate[A,B]): Unit
 
   /**
     * Adds a new map unit that executes a map {@code func} on a stream of data from a given
@@ -57,38 +63,26 @@ trait FlowBit {
     * @tparam A the data type of the data to be processed.
     * @tparam B the data type of the processed data.
     */
-  def addMap[A,B](id: String, fromTopic: String, toTopic: String, func: (A) => B): Unit
+  def addMap[A,B,C,D](id: String, fromTopic: String, toTopic: List[String], func: KeyValueMapper[A,B,KeyValue[C,D]]): Unit
 
   /**
-    * Creates a consumer that returns the data from a given topic as a list.
+    * Creates a consumer that fetches the data from a given topic and sends it to a given
+    * {@link Destination} destination.
     *
     * @param id the id of the consumer.
     * @param topic the topic from which to get the values from.
-    * @tparam A the data type of the values to be retrieved.
-    *
-    * @return the values as a list
+    * @param groupId the id of the group that this consumer is subscribed to.
+    * @param dest the destination to which to send the data.
     */
-  def getConsumer[A](id: String, topic: String): List[A]
+  def addConsumer[A,B](id: String, topic: String, groupId: String, dest: Destination[A, B]): Unit
 
   /**
-    * Removes a unit from the pipeline.
-    *
-    * @param id the id of the unit.
+    * Prints the list of all units ids in this pipeline.
     */
-  def removeUnit(id: String): Unit
+  def getUnits(): Unit
 
   /**
-    * Returns the list of all units ids in this pipeline.
-    *
-    * @return the list of units ids.
+    * Prints the list of all topics in this pipeline.
     */
-  def getUnits(): List[String]
-
-  /**
-    * Returns the list of all topics in this pipeline.
-    *
-    * @return the list of topics.
-    */
-  def getTopics(): List[String]
-
+  def getTopics(): Unit
 }

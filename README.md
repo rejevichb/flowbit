@@ -8,7 +8,7 @@ org.apache.kafka:kafka-streams-scala_2.11:2.1.1
 
 org.slf4j:slf4j-api:1.8.0-beta4
 
-Simple Logging Facade for Java:1.8.0-beta4
+org.slf4j:slf4j-simple:1.8.0-beta4
 
 
 
