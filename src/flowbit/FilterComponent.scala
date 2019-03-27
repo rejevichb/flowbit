@@ -1,8 +1,9 @@
 package flowbit
 
+import flowbit.serdes.AnySerde
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.{KafkaStreams, StreamsBuilder, StreamsConfig}
-import org.apache.kafka.streams.kstream.{KStream, Predicate}
+import org.apache.kafka.streams.kstream.{Consumed, KStream, Predicate}
 
 
 final class FilterComponent[A,B](id: String, server: String, fromTopic: String,
@@ -13,8 +14,9 @@ final class FilterComponent[A,B](id: String, server: String, fromTopic: String,
 
   // Add to stop casting and serialization issues with strings
   val strings = Serdes.String()
-  properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, strings.getClass().getName())
-  properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, strings.getClass().getName())
+  val anySerde = new AnySerde()
+  properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, anySerde.getClass())
+  properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, anySerde.getClass())
 
 
   override def execute(): Unit = {

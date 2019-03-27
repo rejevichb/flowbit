@@ -3,6 +3,7 @@ package flowbit
 import java.time.Duration
 
 import flowbit.endpoints.Destination
+import flowbit.serdes.AnySerde
 import org.apache.kafka.clients.consumer.KafkaConsumer
 
 import collection.JavaConverters._
@@ -14,8 +15,9 @@ class ConsumerComponent[A,B](id: String, server: String, dest: Destination[A,B],
   var noRecordsCount = 0
 
   // Consumer-specific properties
-  properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
-  properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+  val anySerdes = new AnySerde();
+  properties.put("key.deserializer", anySerdes.deserializer().getClass())
+  properties.put("value.deserializer", anySerdes.deserializer().getClass())
   properties.put("group.id", groupId)
 
   override def execute(): Unit = {
