@@ -1,5 +1,6 @@
 package flowbit
 
+import flowbit.serdes.AnySerde
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.kstream.{KStream, KeyValueMapper}
 import org.apache.kafka.streams.{KafkaStreams, KeyValue, StreamsBuilder, StreamsConfig}
@@ -12,9 +13,9 @@ final class MapComponent[A,B,C,D](id: String, server: String, fromTopic: String,
   properties.put(StreamsConfig.APPLICATION_ID_CONFIG, id)
 
   // Add to stop casting and serialization issues with strings
-  val strings = Serdes.String()
-  properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, strings.getClass().getName())
-  properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, strings.getClass().getName())
+  val serde = new AnySerde
+  properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, serde.getClass().getName)
+  properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, serde.getClass().getName)
 
   override def execute(): Unit = {
 

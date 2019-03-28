@@ -7,8 +7,8 @@ class ProducerComponent[A, B](id: String, server: String, source: Source[A, B], 
   extends AbsComponent(id, server) {
 
   // Producer-specific configs
-  properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-  properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  properties.put("key.serializer", "flowbit.serdes.serializer.AnySerializer")
+  properties.put("value.serializer", "flowbit.serdes.serializer.AnySerializer")
 
   override def execute(): Unit = {
     val producer = new KafkaProducer[A, B](properties)

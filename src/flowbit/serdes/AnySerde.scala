@@ -2,6 +2,7 @@ package flowbit.serdes
 
 import java.util
 
+import flowbit.serdes.deserializer.AnyDeserializer
 import flowbit.serdes.serializer.AnySerializer
 import org.apache.kafka.common.serialization.{Deserializer, Serde, Serializer}
 

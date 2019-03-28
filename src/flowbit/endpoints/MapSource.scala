@@ -10,13 +10,13 @@ class MapSource extends Source[Int, HashMap[String, Int]] {
     * @return a stream of the maps.
     */
   override def poll: Stream[(Int, HashMap[String, Int])] = {
-    def getMap(x: Int): (Int, HashMap[String, Int]) = {
-      var map : HashMap[String, Int] = new HashMap().empty
-      for (i <- 0 to x) {
+    def makeMap(n: Int): (Int, HashMap[String, Int]) = {
+      var map : HashMap[String,Int] = new HashMap().empty
+      for (i <- 0 to n) {
         map = map.+(("key" + i) -> (i))
       }
-      ((x) -> (map))
+      ((n) -> (map))
     }
-    return Stream.range(0, 100).map(getMap)
+    return Stream.range(0,100).map(makeMap)
   }
 }

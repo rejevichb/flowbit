@@ -14,8 +14,8 @@ class ConsumerComponent[A,B](id: String, server: String, dest: Destination[A,B],
   var noRecordsCount = 0
 
   // Consumer-specific properties
-  properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
-  properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+  properties.put("key.deserializer", "flowbit.serdes.deserializer.AnyDeserializer")
+  properties.put("value.deserializer", "flowbit.serdes.deserializer.AnyDeserializer")
   properties.put("group.id", groupId)
 
   override def execute(): Unit = {
