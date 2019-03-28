@@ -1,14 +1,17 @@
 package flowbit
 
 import flowbit.endpoints.Source
+import flowbit.serdes.AnySerde
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 class ProducerComponent[A, B](id: String, server: String, source: Source[A, B], toTopics: List[String])
   extends AbsComponent(id, server) {
 
   // Producer-specific configs
-  properties.put("key.serializer", "flowbit.serdes.serializer.AnySerializer")
-  properties.put("value.serializer", "flowbit.serdes.serializer.AnySerializer")
+  val serde = new AnySerde
+  properties.put("value.serializer", serde.serializer().getClass().getName)
+  properties.put("key.serializer", serde.serializer().getClass().getName)
+
 
   override def execute(): Unit = {
     val producer = new KafkaProducer[A, B](properties)
