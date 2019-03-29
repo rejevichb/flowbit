@@ -1,4 +1,4 @@
-package flowbit.endpoints
+package flowbit.destination
 
 /**
   * Trait representing destination for data to be stored.

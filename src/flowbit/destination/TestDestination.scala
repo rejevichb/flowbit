@@ -1,4 +1,4 @@
-package flowbit.endpoints
+package flowbit.destination
 
 class TestDestination extends Destination[String, String] {
   override def record(data: (String, String)): Boolean = {

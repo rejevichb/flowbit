@@ -1,4 +1,4 @@
-package flowbit.endpoints
+package flowbit.source
 
 import scala.collection.immutable.HashMap
 

@@ -1,4 +1,4 @@
-package flowbit.endpoints
+package flowbit.source
 
 class TestSource extends Source[String, String] {
 

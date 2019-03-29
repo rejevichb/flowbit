@@ -1,6 +1,6 @@
-import flowbit.endpoints.{MapDestination, MapSource, TestDestination, TestSource}
 import flowbit.FlowBitImpl
-import flowbit.serdes.AnySerde
+import flowbit.destination.MapDestination
+import flowbit.source.MapSource
 import org.apache.kafka.streams.KeyValue
 
 import scala.collection.immutable.HashMap
@@ -37,7 +37,6 @@ object Main {
     val dest = new MapDestination
     println("adding consumer")
     flowbit.addConsumer[String, HashMap[String, Int]]("consumer1", "done1", "group1", dest)
-
   }
 
 
