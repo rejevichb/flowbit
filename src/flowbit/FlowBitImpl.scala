@@ -34,6 +34,9 @@ class FlowBitImpl(server: String) extends FlowBit {
   val topicConfigs = Map(TopicConfig.CLEANUP_POLICY_CONFIG -> TopicConfig.CLEANUP_POLICY_COMPACT,
     TopicConfig.COMPRESSION_TYPE_CONFIG -> "gzip").asJava
 
+
+  val newTopics = this.topics.par.companion
+
   /**
     * Adds a new Kafka topic into the system.
     *
