@@ -1,6 +1,6 @@
 import flowbit.FlowBitImpl
 import flowbit.destination.{MapDestination, SQLiteDestination}
-import flowbit.source.{MapSource, SQLiteSource}
+import flowbit.source.{MapSource, SQLiteSource, TSource}
 import org.apache.kafka.streams.KeyValue
 
 import scala.collection.immutable.HashMap
@@ -11,6 +11,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
 
+    /*
     val flowbit = new FlowBitImpl("localhost:9092")
 
     println("there should be no topics in the flowbit")
@@ -37,6 +38,10 @@ object Main {
     val dest = new SQLiteDestination
     println("adding consumer")
     flowbit.addConsumer[Int, List[String]]("consumer1", "done1", "group1", dest)
+    */
+
+    val twitter = new TSource
+    twitter.poll
 
   }
 

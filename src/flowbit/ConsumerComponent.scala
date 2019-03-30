@@ -8,6 +8,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 
 import collection.JavaConverters._
 
+
 class ConsumerComponent[A,B](id: String, server: String, dest: Destination[A,B], topic: String, groupId: String)
   extends AbsComponent(id, server) {
 
@@ -21,6 +22,7 @@ class ConsumerComponent[A,B](id: String, server: String, dest: Destination[A,B],
   properties.put("group.id", groupId)
 
   override def execute(): Unit = {
+    /*
     val consumer = new KafkaConsumer[A, B](properties)
 
     // Need to convert to java collection
@@ -38,5 +40,6 @@ class ConsumerComponent[A,B](id: String, server: String, dest: Destination[A,B],
     }
 
     consumer.close()
+    */
   }
 }
