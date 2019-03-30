@@ -16,6 +16,7 @@
 .idea/**/modules.xml
 .idea/**/vcs.xml
 .idea/inspectionProfiles/
+.idea/hydra.xml
 
 #exclude binaries
 /out
