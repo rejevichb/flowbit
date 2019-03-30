@@ -2,7 +2,7 @@ package flowbit
 
 import java.time.Duration
 
-import flowbit.endpoints.Destination
+import flowbit.destination.Destination
 import flowbit.serdes.AnySerde
 import org.apache.kafka.clients.consumer.KafkaConsumer
 

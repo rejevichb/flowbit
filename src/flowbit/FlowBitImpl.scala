@@ -2,7 +2,8 @@ package flowbit
 
 import java.util.Properties
 
-import flowbit.endpoints.{Destination, Source}
+import flowbit.destination.Destination
+import flowbit.source.Source
 
 import scala.collection.immutable.HashMap
 import scala.collection.immutable.HashSet

@@ -12,5 +12,7 @@
     <orderEntry type="library" name="org.apache.kafka:kafka-streams-scala_2.11:2.1.1" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.8.0-beta4" level="project" />
     <orderEntry type="library" name="Simple Logging Facade for Java:1.8.0-beta4" level="project" />
+    <orderEntry type="library" name="org.scalaj:scalaj-http_2.10:2.4.1" level="project" />
+    <orderEntry type="library" name="org.xerial:sqlite-jdbc:3.8.11.2" level="project" />
   </component>
 </module>
