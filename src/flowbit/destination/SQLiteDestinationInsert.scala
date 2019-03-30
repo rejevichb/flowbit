@@ -1,6 +1,6 @@
 package flowbit.destination
 
-class SQLiteDestination() extends Destination[Int, List[String]] {
+class SQLiteDestinationInsert extends Destination[Int, List[String]] {
   /**
     * Records the given record in a data store.
     *
@@ -10,7 +10,6 @@ class SQLiteDestination() extends Destination[Int, List[String]] {
     * @return whether the data was successfully recorded
     */
   override def record(data: (Int, List[String])): Boolean = {
-    for (name <- data._2) println(name)
     return true
   }
 }

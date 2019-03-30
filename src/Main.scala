@@ -1,5 +1,5 @@
 import flowbit.FlowBitImpl
-import flowbit.destination.{MapDestination, SQLiteDestination}
+import flowbit.destination.{CSVDestination, MapDestination, SQLiteDestinationTable}
 import flowbit.source.{MapSource, SQLiteSource}
 import org.apache.kafka.streams.KeyValue
 
@@ -22,7 +22,7 @@ object Main {
     println("there should be 3 topics")
     flowbit.getTopics()
 
-    val source = new SQLiteSource("/usr/local/Cellar/sqlite/3.27.1/bin/chinook.db", List("GenreId", "Name"), "SELECT * FROM genres")
+    val source = new SQLiteSource("/usr/local/Cellar/sqlite/3.27.1/bin/chinook.db", List("TrackId", "Name", "AlbumId"), "SELECT TrackId, Name, AlbumId FROM tracks LIMIT 10")
     println("adding producer")
     flowbit.addProducer[Int, List[String]]("producer1", source, List("toBeFiltered1"))
 
@@ -32,11 +32,13 @@ object Main {
 
     println("adding map")
     flowbit.addMap[Int, List[String], Int, List[String]]("map1", "toBeMapped1", List("done1"),
-      (k,v) => new KeyValue(k, v.tail))
+      (k,v) => new KeyValue(k, v))
 
-    val dest = new SQLiteDestination
+    val dest = new CSVDestination("")
     println("adding consumer")
-    flowbit.addConsumer[Int, List[String]]("consumer1", "done1", "group1", dest)
+    dest.init()
+    flowbit.addConsumer[String, List[String]]("consumer1", "done1", "group1", dest)
+    dest.end()
 
   }
 
