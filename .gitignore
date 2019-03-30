@@ -18,8 +18,7 @@
 .idea/inspectionProfiles/
 
 #exclude binaries
-/bin
-
+/out
 
 # Generated files
 .idea/**/contentModel.xml
