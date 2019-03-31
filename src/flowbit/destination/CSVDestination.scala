@@ -5,7 +5,7 @@ import java.io.{BufferedWriter, File, FileOutputStream, FileWriter}
 import java.nio.file.Files
 import java.util
 
-class CSVDestination(filePath: String) extends Destination[String, List[String]] {
+class CSVDestination(filePath: String) extends Destination[String, Map[String,String]] {
   /**
     * Records the given record in a data store.
     *
@@ -15,20 +15,24 @@ class CSVDestination(filePath: String) extends Destination[String, List[String]]
     * @return whether the data was successfully recorded
     */
 
+  var header = false;
   var outputFile : BufferedWriter = null
 
-  def init(): Unit =  {
-    val file: File = new File(filePath + "output.csv")
-    file.createNewFile
-    outputFile = new BufferedWriter(new FileWriter(file))
-  }
+  val file: File = new File(filePath + "output.csv")
+  file.createNewFile
+  outputFile = new BufferedWriter(new FileWriter(file))
 
 
-  override def record(data: (String, List[String])): Boolean = {
+  override def record(data: (String, Map[String,String])): Boolean = {
+    if (!header) {
+      data._2.foreach(tuple => outputFile.append(tuple._1 + ","))
+      outputFile.newLine();
+      header = true;
+    }
 
     for (item <- data._2) {
       println(item)
-      outputFile.append(item)
+      outputFile.append(item._2)
       outputFile.append(",")
     }
     outputFile.newLine()
@@ -36,7 +40,7 @@ class CSVDestination(filePath: String) extends Destination[String, List[String]]
     return true
   }
 
-  def end(): Unit = {
+  sys.ShutdownHookThread {
     outputFile.close()
   }
 }
