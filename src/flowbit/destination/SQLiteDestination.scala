@@ -2,10 +2,10 @@ package flowbit.destination
 
 import java.sql.{Connection, DriverManager, PreparedStatement, SQLException}
 
-class SQLiteDestination(dbPath :String, tableName :String) extends Destination[Int, Map[String,String]] {
+class SQLiteDestination(dbPath :String, tableName :String, insert: Boolean = false) extends Destination[Int, Map[String,String]] {
 
   var connection: Connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath)
-  var inserted = false
+  var inserted = insert
   var ps: PreparedStatement = null
 
   override def record(data: (Int, Map[String,String])): Boolean = {

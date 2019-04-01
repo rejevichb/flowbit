@@ -31,7 +31,8 @@ object Main {
     flowbit.addMap[Int, Map[String, String], Int, Map[String, String]]("map1", "toBeMapped1", List("done1"),
       (k,v) => new KeyValue(k, v))
 
-    val dest = new SQLiteDestination("songs.db", "filtered")
+    // val dest = new SQLiteDestination("songs.db", "filtered")
+    val dest = new CSVDestination("long-songs.csv")
     println("adding consumer")
     flowbit.addConsumer[Int, Map[String, String]]("consumer1", "done1", "group1", dest)
   }
