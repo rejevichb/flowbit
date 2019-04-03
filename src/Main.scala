@@ -2,6 +2,7 @@ import flowbit.FlowBitImpl
 import flowbit.destination._
 import flowbit.source._
 import org.apache.kafka.streams.KeyValue
+import flowbit.Parser
 
 object Main {
 
@@ -9,6 +10,9 @@ object Main {
   def main(args: Array[String]): Unit = {
 
     val flowbit = new FlowBitImpl("localhost:9092")
+
+    val parser = new Parser()
+    println(parser.getFilterArgs())
 
     println("there should be no topics in the flowbit")
     flowbit.getTopics()
