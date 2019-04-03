@@ -13,5 +13,6 @@
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.8.0-beta4" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-simple:1.8.0-beta4" level="project" />
     <orderEntry type="library" name="org.xerial:sqlite-jdbc:3.27.2" level="project" />
+    <orderEntry type="library" name="net.objecthunter:exp4j:0.4.8" level="project" />
   </component>
 </module>

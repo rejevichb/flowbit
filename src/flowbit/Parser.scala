@@ -1,5 +1,10 @@
 package flowbit
+import java.util.function.{BiFunction, Predicate}
+
+import net.objecthunter.exp4j.{Expression, ExpressionBuilder}
+
 import scala.collection.mutable
+import scala.collection.parallel.immutable
 import scala.io.{BufferedSource, Source}
 
 class Parser {
@@ -17,29 +22,35 @@ class Parser {
     topics
   }
 
-  def getFilterArgs(): mutable.HashMap[String, Array[String]] = {
-    val filterMap = new mutable.HashMap[String, Array[String]]()
-    var filterCounter: Int = 0
+  def getFilterArgs[A, B](): Array[Any] = {
+    var filterSeq = Seq[Any]()
+
     for (line <- configFile.getLines) {
       if (line.contains("filter")) {
+        // Get the line as a list of string separated by comma
         val lineAsList = line.split("\\s+")
+        // Get the predicate to be passed to the filter
         val pred = line.substring(line.lastIndexOf(":")+1)
-        val args: Array[String] = lineAsList.slice(2, 4) :+ pred
-        filterMap.put(lineAsList(1), args)
-        filterCounter += 1
+        // Get string version of predicate as lambda function
+        val predLambda: ExpressionBuilder = new ExpressionBuilder(pred).variables("k", "v")
+        // create args tuple
+        val args = (lineAsList(2), List(lineAsList(3)), predLambda)
+        // Create map to be returned
+        filterSeq = filterSeq :+ lineAsList(1)
+        filterSeq = filterSeq :+ args
       }
     }
-    filterMap
+    filterSeq.toArray
   }
 
-  def getMapArgs(): mutable.HashMap[String, List[String]] = {
-    val mapMap = new mutable.HashMap[String, List[String]]()
-    var mapCounter: Int = 0
+  def getMapArgs(): mutable.HashMap[String, Array[String]] = {
+    val mapMap = new mutable.HashMap[String, Array[String]]()
     for (line <- configFile.getLines) {
       if (line.contains("map")) {
         val lineAsList = line.split("\\s+")
-        mapMap.put(lineAsList.head.concat(mapCounter.toString), lineAsList.tail.toList)
-        mapCounter += 1
+        val pred = line.substring(line.lastIndexOf(":")+1)
+        val args: Array[String] = lineAsList.slice(2, 4) :+ pred
+        mapMap.put(lineAsList(1), args)
       }
     }
     mapMap

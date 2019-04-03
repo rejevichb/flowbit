@@ -12,13 +12,13 @@ object Main {
     val flowbit = new FlowBitImpl("localhost:9092")
 
     val parser = new Parser()
-    println(parser.getFilterArgs())
+    println(parser.getFilterArgs()(1)._2)
 
     println("there should be no topics in the flowbit")
     flowbit.getTopics()
 
     println("adding topics")
-    flowbit.addTopics(List("toBeFiltered1", "toBeMapped1", "done1"), 1, 1)
+    flowbit.addTopics(parser.getTopics().toList, 1, 1)
 
     println("there should be 3 topics")
     flowbit.getTopics()
@@ -30,6 +30,7 @@ object Main {
     println("adding filter")
     flowbit.addFilter[Int, Map[String, String]]("filter1", "toBeFiltered1", List("toBeMapped1"),
       (k, v) => v.apply("length").toDouble > 3)
+
 
     println("adding map")
     flowbit.addMap[Int, Map[String, String], Int, Map[String, String]]("map1", "toBeMapped1", List("done1"),
