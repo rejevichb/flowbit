@@ -2,7 +2,7 @@ package main.scala.source
 
 import java.sql.{Connection, DriverManager, SQLException}
 
-class SQLiteSource(dbPath: String, columnNames: List[String], query: String) extends Source[Int, List[String]] {
+class SQLiteSource(dbPath: String, columnNames: List[String], query: String) extends Source[Int, Map[String,String]] {
   /** *
     * Polls the data source for records which come in the form of mappings
     * from key to value.
@@ -10,7 +10,7 @@ class SQLiteSource(dbPath: String, columnNames: List[String], query: String) ext
     * @return a stream of the maps.
     */
   @throws(classOf[SQLException])
-  override def poll: Stream[(Int, List[String])] = {
+  override def poll: Stream[(Int, Map[String,String])] = {
 
     var connection: Connection = null
     try { // db parameters
@@ -19,12 +19,12 @@ class SQLiteSource(dbPath: String, columnNames: List[String], query: String) ext
       connection = DriverManager.getConnection(database)
       val statement = connection.createStatement()
       val resultSet = statement.executeQuery(query)
-      var result = Stream.empty[(Int, List[String])]
+      var result = Stream.empty[(Int, Map[String, String])]
       var counter = 0
       while (resultSet.next()) {
-        var row = List.empty[String]
+        var row = Map.empty[String, String]
         for (name <- columnNames) {
-          row = row :+ (resultSet.getString(name))
+          row += (name -> resultSet.getString(name))
         }
         result = result :+ ((counter) -> (row))
         counter += 1

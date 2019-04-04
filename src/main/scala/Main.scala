@@ -1,6 +1,10 @@
+
 package main.scala
 
 import main.scala.source.SQLiteSource
+import main.scala.source
+import main.scala.destination
+import main.scala.destination.CSVDestination
 import org.apache.kafka.streams.KeyValue
 
 object Main {
@@ -19,24 +23,22 @@ object Main {
     println("there should be 3 topics")
     flowbit.getTopics()
 
-    val source = new SQLiteSource("/usr/local/Cellar/sqlite/3.27.1/bin/chinook.db", List("TrackId", "Name", "AlbumId"), "SELECT TrackId, Name, AlbumId FROM tracks LIMIT 10")
+    val source = new SQLiteSource("songs.db", List("id", "title", "length"), "select * from songs")
     println("adding producer")
-    flowbit.addProducer[Int, List[String]]("producer1", source, List("toBeFiltered1"))
+    flowbit.addProducer[Int, Map[String, String]]("producer1", source, List("toBeFiltered1"))
 
     println("adding filter")
-    flowbit.addFilter[Int, List[String]]("filter1", "toBeFiltered1", List("toBeMapped1"),
-      (k, v) => k % 2 == 0)
+    flowbit.addFilter[Int, Map[String, String]]("filter1", "toBeFiltered1", List("toBeMapped1"),
+      (k, v) => v.apply("length").toDouble > 3)
 
     println("adding map")
-    flowbit.addMap[Int, List[String], Int, List[String]]("map1", "toBeMapped1", List("done1"),
+    flowbit.addMap[Int, Map[String, String], Int, Map[String, String]]("map1", "toBeMapped1", List("done1"),
       (k,v) => new KeyValue(k, v))
 
-    val dest = new destination.CSVDestination("")
+    // val dest = new SQLiteDestination("songs.db", "filtered")
+    val dest = new CSVDestination("long-songs.csv")
     println("adding consumer")
-    dest.init()
-    flowbit.addConsumer[String, List[String]]("consumer1", "done1", "group1", dest)
-    dest.end()
-
+    flowbit.addConsumer[Int, Map[String, String]]("consumer1", "done1", "group1", dest)
   }
 
 
