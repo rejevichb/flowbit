@@ -1,10 +1,8 @@
-import flowbit.FlowBitImpl
-import flowbit.destination.{CSVDestination, MapDestination, SQLiteDestinationTable}
-import flowbit.source.{MapSource, SQLiteSource}
+package flowbit
+
+import flowbit.destination.CSVDestination
+import flowbit.source.SQLiteSource
 import org.apache.kafka.streams.KeyValue
-
-import scala.collection.immutable.HashMap
-
 
 object Main {
 
@@ -44,4 +42,3 @@ object Main {
 
 
 }
-

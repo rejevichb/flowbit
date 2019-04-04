@@ -1,9 +1,12 @@
+package flowbit
+
 import java.io.{File, PrintWriter}
 import java.time.Duration
 import java.util.Properties
 
-import collection.JavaConverters._
 import org.apache.kafka.clients.consumer.KafkaConsumer
+
+import scala.collection.JavaConverters._
 
 class ConsumerTest(id: String, topics: List[String], filePath: String) {
 

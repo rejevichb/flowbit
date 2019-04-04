@@ -2,8 +2,7 @@ package flowbit.destination
 
 
 import java.io.{BufferedWriter, File, FileOutputStream, FileWriter}
-import java.nio.file.Files
-import java.util
+
 
 class CSVDestination(filePath: String) extends Destination[String, List[String]] {
   /**

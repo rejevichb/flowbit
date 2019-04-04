@@ -1,10 +1,12 @@
+package flowbit
+
 import java.util.Properties
-import org.apache.kafka.streams.scala.StreamsBuilder
-import org.apache.kafka.streams.scala._
+
 import org.apache.kafka.streams.scala.ImplicitConversions._
-import Serdes._
-import org.apache.kafka.streams.{KafkaStreams, KeyValue, StreamsConfig}
+import org.apache.kafka.streams.scala.Serdes._
+import org.apache.kafka.streams.scala.{StreamsBuilder, _}
 import org.apache.kafka.streams.scala.kstream.KStream
+import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 
 class StreamerTest(fromTopic: String, toTopic: String) {
 
