@@ -23,23 +23,23 @@ class Parser {
     topics
   }
 
-  def getFilterArgs[A, B](): scala.collection.immutable.Map[String,(String, List[String], Predicate[A, B])]= {
-    var argsSeq = Map[String, (String, List[String], Predicate[A, B])]
-
-    for (line <- configFile.getLines) {
-      if (line.contains("filter")) {
-        // Get the line as a list of string separated by comma
-        val lineAsList = line.split("\\s+")
-        // Get the predicate to be passed to the filter
-        val pred = line.substring(line.lastIndexOf(":")+1)
-        // Get string version of predicate as lambda function
-        val predLambda: ExpressionBuilder = new ExpressionBuilder(pred).variables("k", "v")
-        // create args tuple
-        argsSeq(lineAsList(1)) = (lineAsList(2), List(lineAsList(3)), new Config somePred)
-      }
-    }
-    argsSeq.
-  }
+//  def getFilterArgs[A, B](): scala.collection.immutable.Map[String,(String, List[String], Predicate[A, B])]= {
+//    var argsSeq = Map[String, (String, List[String], Predicate[A, B])]
+//
+//    for (line <- configFile.getLines) {
+//      if (line.contains("filter")) {
+//        // Get the line as a list of string separated by comma
+//        val lineAsList = line.split("\\s+")
+//        // Get the predicate to be passed to the filter
+//        val pred = line.substring(line.lastIndexOf(":")+1)
+//        // Get string version of predicate as lambda function
+//        val predLambda: ExpressionBuilder = new ExpressionBuilder(pred).variables("k", "v")
+//        // create args tuple
+//        argsSeq(lineAsList(1)) = (lineAsList(2), List(lineAsList(3)), new Config somePred)
+//      }
+//    }
+//    argsSeq.
+//  }
 
   def getMapArgs(): mutable.HashMap[String, Array[String]] = {
     val mapMap = new mutable.HashMap[String, Array[String]]()

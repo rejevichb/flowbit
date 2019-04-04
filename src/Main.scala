@@ -2,7 +2,7 @@ import flowbit.FlowBitImpl
 import flowbit.destination._
 import flowbit.source._
 import org.apache.kafka.streams.KeyValue
-import flowbit.Parser
+import config.Config
 
 object Main {
 
@@ -10,15 +10,13 @@ object Main {
   def main(args: Array[String]): Unit = {
 
     val flowbit = new FlowBitImpl("localhost:9092")
-
-    val parser = new Parser()
-//    println(parser.getFilterArgs()(1)._2)
+    val config = new Config
 
     println("there should be no topics in the flowbit")
     flowbit.getTopics()
 
     println("adding topics")
-    flowbit.addTopics(parser.getTopics().toList, 1, 1)
+    flowbit.addTopics(config.topics, 1, 1)
 
     println("there should be 3 topics")
     flowbit.getTopics()
@@ -28,9 +26,8 @@ object Main {
     flowbit.addProducer[Int, Map[String, String]]("producer1", source, List("toBeFiltered1"))
 
     println("adding filter")
-    flowbit.addFilter[Int, Map[String, String]]("filter1", "toBeFiltered1", List("toBeMapped1"),
-      (k, v) => v.apply("length").toDouble > 3)
-
+    flowbit.addFilter[Int, Map[String, String]](config.filter1._1, config.filter1._2._1, config.filter1._2._2,
+                                                config.filter1._2._3)
 
     println("adding map")
     flowbit.addMap[Int, Map[String, String], Int, Map[String, String]]("map1", "toBeMapped1", List("done1"),
