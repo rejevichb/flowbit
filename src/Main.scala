@@ -12,7 +12,7 @@ object Main {
     val flowbit = new FlowBitImpl("localhost:9092")
 
     val parser = new Parser()
-    println(parser.getFilterArgs()(1)._2)
+//    println(parser.getFilterArgs()(1)._2)
 
     println("there should be no topics in the flowbit")
     flowbit.getTopics()

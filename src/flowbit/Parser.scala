@@ -1,5 +1,6 @@
 package flowbit
-import java.util.function.{BiFunction, Predicate}
+import org.apache.kafka.streams.kstream.{Predicate}
+import config.Config
 
 import net.objecthunter.exp4j.{Expression, ExpressionBuilder}
 
@@ -9,7 +10,7 @@ import scala.io.{BufferedSource, Source}
 
 class Parser {
 
-  val configFile: BufferedSource = Source.fromFile("config.txt")
+  val configFile: BufferedSource = Source.fromFile("config.scala")
 
   def getTopics(): Array[String] = {
     var topics = Array[String]()
@@ -22,8 +23,8 @@ class Parser {
     topics
   }
 
-  def getFilterArgs[A, B](): Array[Any] = {
-    var filterSeq = Seq[Any]()
+  def getFilterArgs[A, B](): scala.collection.immutable.Map[String,(String, List[String], Predicate[A, B])]= {
+    var argsSeq = Map[String, (String, List[String], Predicate[A, B])]
 
     for (line <- configFile.getLines) {
       if (line.contains("filter")) {
@@ -34,13 +35,10 @@ class Parser {
         // Get string version of predicate as lambda function
         val predLambda: ExpressionBuilder = new ExpressionBuilder(pred).variables("k", "v")
         // create args tuple
-        val args = (lineAsList(2), List(lineAsList(3)), predLambda)
-        // Create map to be returned
-        filterSeq = filterSeq :+ lineAsList(1)
-        filterSeq = filterSeq :+ args
+        argsSeq(lineAsList(1)) = (lineAsList(2), List(lineAsList(3)), new Config somePred)
       }
     }
-    filterSeq.toArray
+    argsSeq.
   }
 
   def getMapArgs(): mutable.HashMap[String, Array[String]] = {
