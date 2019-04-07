@@ -1,0 +1,17 @@
+topics: toBeFiltered1 toBeMapped1 done1
+
+$source= songs.db
+
+$sourceCols= id title length 
+
+$sourceQuery=  select * from songs
+
+producer: producer1 List(toBeFiltered1))
+
+filter: filter1 toBeFiltered1 List(toBeMapped1) pred: $length == 3
+
+map: map1 toBeMapped1 List(done1) pred: $pay = ($hours * $wage)
+
+$destination= long-songs.csv
+
+consumer= conusmer1 done1 group1
