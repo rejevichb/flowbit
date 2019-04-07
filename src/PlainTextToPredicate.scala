@@ -1,6 +1,6 @@
 import org.apache.kafka.streams.kstream.Predicate
 
-import javax.script.{ScriptEngine, ScriptEngineManager}
+import javax.script.{ScriptEngineManager}
 
 object PlainTextToPredicate {
 
@@ -54,7 +54,7 @@ object PlainTextToPredicate {
 
           (key, endMap);
         } catch {
-          case e: Exception => throw e // throw new RuntimeException("Map function was applied on bad parameters")
+          case e: Exception => throw new RuntimeException("Map function was applied on bad parameters")
         }
       }
     }

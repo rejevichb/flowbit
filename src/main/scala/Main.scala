@@ -11,9 +11,6 @@ object Main {
 
     val flowbit = new FlowBitImpl("localhost:9092")
 
-    val parser = new Parser()
-    println(parser.createConfigMap())
-
     println("there should be no topics in the flowbit")
     flowbit.getTopics()
 
@@ -32,13 +29,13 @@ object Main {
       (k, v) => v.apply("length").toDouble > 3)
 
     println("adding map")
-    flowbit.addMap[Int, Map[String, String], Int, Map[String, String]]("map1", "toBeMapped1", List("done1"),
+    flowbit.addMap[Int, Map[String, String], Int, Map[String, Any]]("map1", "toBeMapped1", List("done1"),
       (k,v) => new KeyValue(k, v))
 
     // val dest = new SQLiteDestination("songs.db", "filtered")
     val dest = new CSVDestination("long-songs.csv")
     println("adding consumer")
-    flowbit.addConsumer[Int, Map[String, String]]("consumer1", "done1", "group1", dest)
+    flowbit.addConsumer[Int, Map[String, Any]]("consumer1", "done1", "group1", dest)
   }
 
 

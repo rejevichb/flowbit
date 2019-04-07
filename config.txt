@@ -1,17 +1,17 @@
-topics: toBeFiltered1 toBeMapped1 done1
+topics: [toFilter toMap toDest]
 
-$source= songs.db
+source: songs.db
 
-$sourceCols= id title length 
+sourceCols: id title length
 
-$sourceQuery=  select * from songs
+sourceQuery: select * from songs;
 
-producer: producer1 List(toBeFiltered1))
+producer: prod1 [toFilter]
 
-filter: filter1 toBeFiltered1 List(toBeMapped1) pred: $length == 3
+filter: filter1 toFilter [toMap] pred: $length > 3
 
-map: map1 toBeMapped1 List(done1) pred: $pay = ($hours * $wage)
+map: map1 toMap [toDest] func: $double_length = $length * 2, $quad_length = $double_length * 2
 
-$destination= long-songs.csv
+destination: songs.db matt
 
-consumer= conusmer1 done1 group1
+consumer: consumer1 toDest group1

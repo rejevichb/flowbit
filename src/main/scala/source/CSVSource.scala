@@ -9,26 +9,36 @@ import scala.collection.immutable.HashMap
   * @param filePath path to the file.
   * @param columnNames the list of column names.
   */
-class CSVSource(filePath: String, columnNames: List[String]) extends Source[Int, Map[String, String]] {
+class CSVSource(filePath: String, columnNames: List[String]) extends Source[Int, Map[String, Any]] {
+
   /** *
     * Polls the data source for records which come in the form of mappings
     * from key to value.
     *
     * @return a stream of the maps.
     */
-  override def poll: Stream[(Int, Map[String, String])] = {
-    val bufferedSource = io.Source.fromFile(filePath)
-    var stream = Stream.empty[(Int, Map[String, String])]
-    var rowLine = 0;
-    for (line <- bufferedSource.getLines) {
+  override def poll: Stream[(Int, Map[String, Any])] = {
+    val sourceIter = io.Source.fromFile(filePath).getLines()
+    var map: Map[String, String] = new HashMap().empty
+    if (sourceIter.hasNext) {
+      val line = sourceIter.next()
       val cols = line.split(",").map(_.trim)
-      var map: Map[String, String] = new HashMap().empty
       for (i <- 0 until columnNames.length) {
         map = map + ((columnNames(i)) -> (cols(i)))
       }
-      stream = stream :+ ((rowLine) -> map)
     }
-    bufferedSource.close
+    def genStream(iter: Iterator[String]): Map[String, String] = {
+      var map: Map[String, String] = new HashMap().empty
+      if (sourceIter.hasNext) {
+        val line = sourceIter.next()
+        val cols = line.split(",").map(_.trim)
+        for (i <- 0 until columnNames.length) {
+          map = map + ((columnNames(i)) -> (cols(i)))
+        }
+      }
+      map
+    }
+    var stream = Stream.iterate((0 -> map))(t => (t._1 + 1) -> genStream(sourceIter))
     return stream
   }
 }

@@ -2,13 +2,13 @@ package main.scala.destination
 
 import java.sql.{Connection, DriverManager, PreparedStatement, SQLException}
 
-class SQLiteDestination(dbPath :String, tableName :String, insert: Boolean = false) extends Destination[Int, Map[String,String]] {
+class SQLiteDestination(dbPath :String, tableName :String, insert: Boolean = false) extends Destination[Int, Map[String, Any]] {
 
   var connection: Connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath)
   var inserted = insert
   var ps: PreparedStatement = null
 
-  override def record(data: (Int, Map[String,String])): Boolean = {
+  override def record(data: (Int, Map[String, Any])): Boolean = {
     try {
       val statement = connection.createStatement()
 
