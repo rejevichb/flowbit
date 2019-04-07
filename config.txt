@@ -1,17 +1,17 @@
-topics: [toFilter toMap toDest]
+// Setup all top-level topics
+topics: [toFilter, toMap, toDest]
 
+// Set up the source
 source: songs.db
+sourceCols: songs [id, title, length]
+producer: my-producer [toFilter]
 
-sourceCols: id title length
+// Set up a filter
+filter: my-filter toFilter [toMap] pred: $length > 3
 
-sourceQuery: select * from songs;
+// Set up a map
+map: my-map toMap [toDest] func: $length = $length * 2
 
-producer: prod1 [toFilter]
-
-filter: filter1 toFilter [toMap] pred: $length > 3
-
-map: map1 toMap [toDest] func: $double_length = $length * 2, $quad_length = $double_length * 2
-
-destination: songs.db matt
-
-consumer: consumer1 toDest group1
+// Designate a destination
+destination: songs.db done
+consumer: my-consumer toDest group1
