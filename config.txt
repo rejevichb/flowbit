@@ -1,3 +1,5 @@
 topics: toBeFiltered1 toBeMapped1 done1
-filter: filter1 toBeFiltered1 toBeMapped1 pred: $length == 3
-map: map1 toBeMapped1 done1 pred= (k,v) => new KeyValue(k, v)(k,v) => new KeyValue(k, v)
+val source = new SQLiteSource("songs.db", List("id", "title", "length"), "select * from songs")
+producer: producer1, source, List("toBeFiltered1"))
+filter: filter1 toBeFiltered1 List(toBeMapped1) pred: $length == 3
+map: map1 toBeMapped1 List(done1) pred: (k,v) => new KeyValue(k, v)

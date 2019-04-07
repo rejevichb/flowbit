@@ -43,7 +43,7 @@ class Parser {
           // Get string version of predicate as lambda function
           val predLambda = predParser(pred)
           // create args tuple
-          configMap(lineAsList(1)) = List(lineAsList(2), lineAsList(3), predLambda)
+          configMap(lineAsList(1)) = (lineAsList(2), lineAsList(3), predLambda)
         }
         else if (line.contains("map")) {
           // Get the line as a list of string separated by comma
@@ -53,7 +53,7 @@ class Parser {
           // Get string version of predicate as lambda function
           val predLambda = predParser(pred)
           // create args tuple
-          configMap(lineAsList(1)) = List(lineAsList(2), lineAsList(3), predLambda)
+          configMap(lineAsList(1)) = (lineAsList(2), lineAsList(3), predLambda)
         }
       }
     }
