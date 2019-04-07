@@ -23,8 +23,8 @@ class CSVSource(filePath: String, columnNames: List[String]) extends Source[Int,
     if (sourceIter.hasNext) {
       val line = sourceIter.next()
       val cols = line.split(",").map(_.trim)
-      for (i <- 0 until columnNames.length) {
-        map = map + ((columnNames(i)) -> (cols(i)))
+      for (i <- columnNames.indices) {
+        map = map + (columnNames(i) -> cols(i))
       }
     }
     def genStream(iter: Iterator[String]): Map[String, String] = {
@@ -32,14 +32,13 @@ class CSVSource(filePath: String, columnNames: List[String]) extends Source[Int,
       if (sourceIter.hasNext) {
         val line = sourceIter.next()
         val cols = line.split(",").map(_.trim)
-        for (i <- 0 until columnNames.length) {
-          map = map + ((columnNames(i)) -> (cols(i)))
+        for (i <- columnNames.indices) {
+          map = map + (columnNames(i) -> cols(i))
         }
       }
       map
     }
-    var stream = Stream.iterate((0 -> map))(t => (t._1 + 1) -> genStream(sourceIter))
-    return stream
+    Stream.iterate(0 -> map)(t => (t._1 + 1) -> genStream(sourceIter))
   }
 }
 

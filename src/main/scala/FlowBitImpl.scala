@@ -20,13 +20,13 @@ import _root_.scala.collection.immutable.{HashMap, HashSet}
   */
 class FlowBitImpl(server: String) extends FlowBit {
   var topics = new HashSet[String]
-  var components = new HashMap[String, Component]().empty
+  var components : HashMap[String, Component] = new HashMap[String, Component]().empty
 
   // Admin Client properties
   val adminProps = new Properties()
   adminProps.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, server)
 
-  val adminClient = AdminClient.create(adminProps)
+  val adminClient : AdminClient = AdminClient.create(adminProps)
 
   // Topic configs
   val topicConfigs = Map(TopicConfig.CLEANUP_POLICY_CONFIG -> TopicConfig.CLEANUP_POLICY_COMPACT,

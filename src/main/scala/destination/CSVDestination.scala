@@ -14,7 +14,7 @@ class CSVDestination(filePath: String) extends Destination[Int, Map[String, Any]
     */
 
   var header = false;
-  var outputFile : BufferedWriter = null
+  var outputFile : BufferedWriter = _
 
   val file: File = new File(filePath)
   file.createNewFile
@@ -30,8 +30,7 @@ class CSVDestination(filePath: String) extends Destination[Int, Map[String, Any]
 
     outputFile.append(data._2.values.map(_.toString).reduce(_ + "," + _))
     outputFile.newLine()
-
-    return true
+    true
   }
 
   sys.ShutdownHookThread {

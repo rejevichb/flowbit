@@ -13,6 +13,17 @@ class Parser {
   val fileName = "config.txt"
   val configFile: BufferedSource = Source.fromFile("config.txt")
 
+  def getTopics(line: String): List[String] = {
+    val squarePattern = "\\[(.*?)\\]".r
+    squarePattern.findFirstIn(line)
+      .getOrElse(throw new RuntimeException).toString
+      .replace("[", "")
+      .replace("]", "")
+      .split(",")
+      .map(_.trim)
+      .toList
+  }
+
   def predParser(text: String): Predicate[Int, Map[String, Any]] = {
     (key, map) => {
       val fact = new ScriptEngineManager()
@@ -76,11 +87,11 @@ class Parser {
           producerSource = line.substring(line.lastIndexOf(":") + 1).trim
         }
         else if (line.contains("sourceCols:")) {
-          val lineAsList =  line.split("\\s+")
-          sourceCols = List(lineAsList(1), lineAsList(2), lineAsList(3))
-        }
-        else if (line.contains("sourceQuery:")) {
-          sourceQuery = line.substring(line.lastIndexOf(":") + 1)
+          sourceCols = getTopics(line)
+          val lineAsList = line.split("\\s+")
+          val tableName = lineAsList(1);
+          val colsWithComma = sourceCols.reduce(_ + "," + _)
+          sourceQuery = "select " + colsWithComma + " from " + tableName + ";"
         }
       }
     }
@@ -91,17 +102,6 @@ class Parser {
 
   def createConfigMap(): Map[String, Any] = {
     var configMap = mutable.Map[String, Any]()
-
-    def getTopics(line: String): List[String] = {
-      val squarePattern = "\\[(.*?)\\]".r
-      squarePattern.findFirstIn(line)
-        .getOrElse(throw new RuntimeException).toString
-        .replace("[", "")
-        .replace("]", "")
-        .split(",")
-        .map(_.trim)
-        .toList
-    }
 
     var dest :Destination[Int, Map[String, Any]] = null;
     for (line <- configFile.getLines) {
