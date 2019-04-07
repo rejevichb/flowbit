@@ -1,0 +1,3 @@
+topics: toBeFiltered1 toBeMapped1 done1
+filter: filter1 toBeFiltered1 toBeMapped1 pred: $length == 3
+map: map1 toBeMapped1 done1 pred= (k,v) => new KeyValue(k, v)(k,v) => new KeyValue(k, v)
