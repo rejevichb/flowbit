@@ -1,11 +1,6 @@
-package flowbit
-import org.apache.kafka.streams.kstream.{Predicate}
-import config.Config
-
-import net.objecthunter.exp4j.{Expression, ExpressionBuilder}
+package main.scala
 
 import scala.collection.mutable
-import scala.collection.parallel.immutable
 import scala.io.{BufferedSource, Source}
 
 class Parser {
