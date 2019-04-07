@@ -33,7 +33,7 @@ class Parser {
       if (!line.contains("//")) {
         if (line.contains("topic")) {
           val lineAsList = line.split("\\s+")
-          configMap("topics") = lineAsList.tail
+          configMap("topics") = lineAsList.tail.toList
         }
         else if (line.contains("filter")) {
           // Get the line as a list of string separated by comma
