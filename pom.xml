@@ -66,22 +66,51 @@
     </dependencies>
 
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>3.1.6</version>
-                <configuration>
-                    <archive>
-                        <mainClass>main.scala.Main</mainClass>
-                    </archive>
-                </configuration>
-            </plugin>
+    <!--<build>-->
+        <!--<pluginManagement>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>maven</groupId>-->
+                <!--<artifactId>scala-maven-plugin</artifactId>-->
+                <!--<version>3.1.6</version>-->
+                <!--<configuration>-->
+                    <!--&lt;!&ndash;<archive>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<manifest>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<addClasspath>true</addClasspath>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<classpathPrefix>src/</classpathPrefix>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<mainClass>main.scala.MainFromConfig</mainClass>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</manifest>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</archive>&ndash;&gt;-->
+                    <!--<launchers>-->
+                        <!--<launcher>-->
+                            <!--<id>foo</id>-->
+                            <!--<mainClass>main.scala.MainFromConfig</mainClass>-->
+                        <!--</launcher>-->
+                    <!--</launchers>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
-        </plugins>
-    </build>
+        <!--</plugins>-->
+        <!--</pluginManagement>-->
+    <!--</build>-->
 
+
+        <build>
+            <sourceDirectory>src/main/scala</sourceDirectory>
+            <testSourceDirectory>src/test/scala</testSourceDirectory>
+           
+            <plugins>
+
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>4.0.1</version>
+
+                </plugin>
+
+            </plugins>
+
+        </build>
 
 
 </project>
