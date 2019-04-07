@@ -26,18 +26,38 @@ class Parser {
     }
   }
 
+  def createSourceObject(): SQLiteSource = {
+    for (line <- configFile.getLines) {
+      if(!line.contains("//") {
+        if (line.contains("$source") {
+          val producerSource = line.substring(line.lastIndexOf("=") + 1)
+        }
+        else if (line.contains("$sourceCols") {
+          val lineAsList =  line.split("\\s+")
+          val sourceCols = List(lineAsList(1), lineAsList(2), lineAsList(3))
+        }
+        else if (line.contains("$sourceQuery") {
+          val sourceQuery = line.substring(line.lastIndexOf("=") + 1)
+        }
+      }
+    }
+    val sourceObject = new SQLiteSource(producerSource, sourceCols, sourceQuery)
+  }
+
   def createConfigMap(): scala.collection.mutable.LinkedHashMap[String, AnyRef] = {
     var configMap = scala.collection.mutable.LinkedHashMap[String, AnyRef]()
 
     for (line <- configFile.getLines) {
       if (!line.contains("//")) {
-        if (line.contains("topic")) {
-          val lineAsList = line.split("\\s+")
+        val lineAsList = line.split("\\s+")
+        
+        if (line.contains("producer") {
+          configMap("producer") = (lineAsList(1), createConfigMap(), lineAsList(2))
+        }
+        else if (line.contains("topic")) {
           configMap("topics") = lineAsList.tail.toList
         }
         else if (line.contains("filter")) {
-          // Get the line as a list of string separated by comma
-          val lineAsList = line.split("\\s+")
           // Get the predicate to be passed to the filter
           val pred = line.substring(line.lastIndexOf(":") + 1)
           // Get string version of predicate as lambda function
@@ -46,14 +66,18 @@ class Parser {
           configMap(lineAsList(1)) = (lineAsList(2), lineAsList(3), predLambda)
         }
         else if (line.contains("map")) {
-          // Get the line as a list of string separated by comma
-          val lineAsList = line.split("\\s+")
           // Get the predicate to be passed to the filter
           val pred = line.substring(line.lastIndexOf(":") + 1)
           // Get string version of predicate as lambda function
           val predLambda = predParser(pred)
           // create args tuple
           configMap(lineAsList(1)) = (lineAsList(2), lineAsList(3), predLambda)
+        }
+        else if (line.contains("$destination") {
+          val dest = new CSVDestination(line.substring(line.lastIndexOf("=") + 1))
+        }
+        else if (line.contains("consumer")) {
+          configMap(lineAsList(1)) = (lineAsList(2), lineAsList(3), dest)
         }
       }
     }
