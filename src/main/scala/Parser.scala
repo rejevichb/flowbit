@@ -26,8 +26,8 @@ class Parser {
     }
   }
 
-  def createConfigMap(): scala.collection.mutable.HashMap[String, AnyRef] = {
-    var configMap = scala.collection.mutable.HashMap[String, AnyRef]()
+  def createConfigMap(): scala.collection.mutable.LinkedHashMap[String, AnyRef] = {
+    var configMap = scala.collection.mutable.LinkedHashMap[String, AnyRef]()
 
     for (line <- configFile.getLines) {
       if (!line.contains("//")) {
