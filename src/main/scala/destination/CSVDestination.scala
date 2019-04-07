@@ -3,7 +3,7 @@ package main.scala.destination
 import java.io.{BufferedWriter, File, FileWriter}
 
 
-class CSVDestination(filePath: String) extends Destination[Int, Map[String,String]] {
+class CSVDestination(filePath: String) extends Destination[Int, Map[String, Any]] {
   /**
     * Records the given record in a data store.
     *
@@ -21,14 +21,14 @@ class CSVDestination(filePath: String) extends Destination[Int, Map[String,Strin
   outputFile = new BufferedWriter(new FileWriter(file))
 
 
-  override def record(data: (Int, Map[String,String])): Boolean = {
+  override def record(data: (Int, Map[String, Any])): Boolean = {
     if (!header) {
       outputFile.append(data._2.keys.reduce(_ + "," + _))
       outputFile.newLine();
       header = true;
     }
 
-    outputFile.append(data._2.values.reduce(_ + "," + _))
+    outputFile.append(data._2.values.map(_.toString).reduce(_ + "," + _))
     outputFile.newLine()
 
     return true

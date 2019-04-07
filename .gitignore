@@ -20,6 +20,8 @@
 
 #exclude binaries
 /out
+/src/META-INF
+/target
 
 # Generated files
 .idea/**/contentModel.xml

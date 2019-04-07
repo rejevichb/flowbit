@@ -1,0 +1,17 @@
+topics: [toFilter toMap toDest]
+
+source: songs.db
+
+sourceCols: id title length
+
+sourceQuery: select * from songs;
+
+producer: prod1 [toFilter]
+
+filter: filter1 toFilter [toMap] pred: $length > 3
+
+map: map1 toMap [toDest] func: $double_length = $length * 2, $quad_length = $double_length * 2
+
+destination: songs.db matt
+
+consumer: consumer1 toDest group1
