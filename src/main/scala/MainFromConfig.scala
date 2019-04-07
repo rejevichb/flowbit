@@ -4,7 +4,6 @@ import main.scala.destination.{CSVDestination, Destination}
 import main.scala.source.{SQLiteSource, Source}
 import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.kstream.Predicate
-import sun.plugin.dom.exception.InvalidStateException
 
 object MainFromConfig {
 
@@ -38,7 +37,7 @@ object MainFromConfig {
         val consumerTuple = nodeTuple.asInstanceOf[(String, String, String, Destination[Int, Map[String, Any]])]
         println("adding consumer: " + consumerTuple._1 + "\tfrom: " + consumerTuple._2)
         flowbit.addConsumer[Int, Map[String, Any]](consumerTuple._1, consumerTuple._2, consumerTuple._3, consumerTuple._4)
-      } else throw new InvalidStateException("Unexpected node name doesn't begin with identifier:" + nodeName)
+      } else throw new IllegalStateException("Unexpected node name doesn't begin with identifier:" + nodeName)
     })
 
     println("UP AND RUNNING")
