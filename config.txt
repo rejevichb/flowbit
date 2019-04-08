@@ -2,7 +2,7 @@
 topics: [toFilter, toMap, toDest]
 
 // Set up the source
-source: songs.db
+source: songs.csv
 sourceCols: songs [id, title, length]
 producer: my-producer [toFilter]
 
@@ -13,5 +13,5 @@ filter: my-filter toFilter [toMap] pred: $length > 3
 map: my-map toMap [toDest] func: $length = $length * 2
 
 // Designate a destination
-destination: songs.db done
+destination: songs1.csv
 consumer: my-consumer toDest group1
