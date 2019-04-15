@@ -2,7 +2,7 @@ package main.scala
 
 import javax.script.ScriptEngineManager
 import main.scala.destination.{CSVDestination, Destination, SQLiteDestination}
-import main.scala.source.SQLiteSource
+import main.scala.source.{CSVSource, SQLiteSource}
 import org.apache.kafka.streams.kstream.Predicate
 
 import scala.collection.mutable
@@ -77,7 +77,7 @@ class Parser {
     }
   }
 
-  def createSourceObject(): SQLiteSource = {
+  def createSourceObject(): Any = {
     var producerSource :String = null
     var sourceCols :List[String] = null
     var sourceQuery :String = null
@@ -95,8 +95,14 @@ class Parser {
         }
       }
     }
-    if (producerSource != null && sourceCols != null && sourceQuery != null)
-      new SQLiteSource(producerSource, sourceCols, sourceQuery)
+    if (producerSource != null && sourceCols != null && sourceQuery != null) {
+      if (producerSource.contains(".db")) {
+        new SQLiteSource(producerSource, sourceCols, sourceQuery)
+      }
+      else {
+        new CSVSource(producerSource, sourceCols)
+      }
+    }
     else throw new RuntimeException("A valid source is not given.")
   }
 
