@@ -1,5 +1,5 @@
 # `Flowbit `
-##### Daniele Zahn | Gabriel Centeno | Matt Martin | Parker Griep | Brendan Rejevich 
+##### Daniele Zhan | Gabriel Centeno | Matt Martin | Parker Griep | Brendan Rejevich 
 
 Please read this file in it's entirety before attempting to execute any code. 
 
