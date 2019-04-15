@@ -8,7 +8,11 @@ Please read this file in it's entirety before attempting to execute any code.
 `Flowbit` is a data pipeline generator that allows end users to specify a variety of data sources
 and destinations, as well as a series of operations that the user wants to perform before the
 data reaches the destination. The user specifies these sources, destinations, and operations in 
-a custom config file. The user must first start ``Apache Zookeeper`` and then ``Apache Kafka`` in 
+a custom config file. 
+
+<img width="1317" alt="Screen Shot 2019-04-15 at 10 15 22 AM" src="https://user-images.githubusercontent.com/31457882/56140081-27c57400-5f68-11e9-8d0f-0474126d3816.png">
+
+The user must first start ``Apache Zookeeper`` and then ``Apache Kafka`` in 
 that order (and when finished shut down in the reverse order). The user then runs the program 
 
 > ``$     ./flowbit.py <config-file-location>``
