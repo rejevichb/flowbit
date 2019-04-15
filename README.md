@@ -17,6 +17,9 @@ to start `Flowbit` and perform the transformations specified in the file. The pr
 instructed to shut down. Provided with the submission are several sample config files. To run the config
 files, please see the appendix. 
 
+<img width="980" alt="Screen Shot 2019-04-15 at 10 15 40 AM" src="https://user-images.githubusercontent.com/31457882/56140006-01073d80-5f68-11e9-9d9f-197b2e16a1e2.png">
+
+
 #### Motivations
 This enables easy and accessible integration and transformation operations on complex
 data sets and simplifies an otherwise technical process that not all end users may have the competencies to 
