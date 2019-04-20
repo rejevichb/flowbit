@@ -25,9 +25,7 @@ files, please see the appendix.
 
 
 #### Motivations
-This enables easy and accessible integration and transformation operations on complex
-data sets and simplifies an otherwise technical process that not all end users may have the competencies to 
-execute. Flowbit does all the heavy lifting - importing data into Kafka in a 
+We wanted to build a tool that would allow non-technical users to format and perform queries on large or even real-time data sets easily. The config file set up that we have allows for easy integration of the predicates and "blocks" you want the data to flow through while being transformed and in the future we would like to make it into a GUI for even easier interaction. Allowing users to only read subsections of their data was also a driver for this project because most of the time your application or implementation only requires some specific data, and using Kafka topics and consumers enables this functionality. Abstracting ETL pipelines for users is something that is in very high demand in industry so we wanted to see how viable it would be to build within a short timeframe given what we had learned in class, and maybe even bring this knowledge then to our co-ops or full time work later. 
 
 
 
