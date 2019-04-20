@@ -34,9 +34,21 @@ execute. Flowbit does all the heavy lifting - importing data into Kafka in a
 
 ### Configuration File Syntax
 
->>TODO: analysis of performance/capacity, in records per second - perform analysis
+- The program is started using a configuration file that defines how the pipeline will be built. All arguments on the lines defined below should be seperated with a space not a comma.
+- Every line that begins with '//' is taken is a comment and can be included by the user for more context.
 
+- There should be one line that begins with the keyword "topics:" and then followed with the user defined topics 
+   square brackets like so [topic1, topic2]
+   
+- There should then be 3 lines defining the source information: the first called "source:" followed either a sqlite .db file or a csv file like so "songs.db". Then a line called "sourcecol:" which contains the name of the table as the first argument if it's a .db file and then the columns in the file inside brackets like so [col1, col1]. Finally there should be a line called "producer:" which has the name of the producer followed by the streams it will be connected to in brackets like so [filter1]
 
+- From here you can begin to set up your stream components - we currently only support filters and maps. You can have as manty of these in any order you want so long as they dump and read from the correct topics so that your data flows in the right order.
+
+- Filter lines should be called out with "filter:" followed by the name of the filter, the topic it reads from, the following    topic it should dump in square brackets like so [topic1], and the predicate you wish to use denoted by "pred:". Column names should have $ in front of them and then you can use any arithmetic operations on those variables.
+
+- Map lines will have the same order values as the filter line but the predicate is denoted by "func:" and you can reassign column values in it - there is an example of how this is done the config.txt file in the repo.
+
+- Finally, you need to set up a dump site denoted by "destination:" and followed by either a database file and the table name ex. - "songs.db done" or a csv file ex. - "songs.csv". There also needs to be a "consumer:" line with the consumer name, the topic that it reads from, and the group it's assigned to - that can be any group defined be the user.
 
 
 ## Analysis 
