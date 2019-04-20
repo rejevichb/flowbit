@@ -51,9 +51,10 @@ We wanted to build a tool that would allow non-technical users to format and per
 
 ## Analysis 
 
-- 
-- 
-- 
+- Implementing the Kafka producer, topics, streams, and producers wasn't as tough as we thougt it would be after spending some time reading the documentation. Writing Scala code with stricter typing than Java and using the less robust Scala Kafka API was the harder portion of this task but nothing we coulnd't tackle as a team.
+- The overall flowbit object implementation was a big design decision because we needed to build out every part of the pipeline in order so that Kafka connect all of the components correctly.
+- The parser for the config file was the toughest implementation detial we had to deal with; first we had to define what the optimal line format would be for each of the components so that they would be easy to parse and then we had to convert them into the objects we needed to pass to the flowbit object. We put all of the parsed config file information into a LinkedHashMap to perserve order for the flowbit object creation. 
+- In hindsight we would have liked to spend more time on implementing other components (e.g. joins) or a GUI that outputs the config file and take metrics of where the bottlenecks are for our implementation. We also now understand why companies many times use basic series of scripts to do this data manipulation because there is a steep learning curve for understanding Kafka and how to build pipelines like these, but in the end it makes the lives of those performing these constant data manipulation operations much easier. 
 
 
 ## Appendix
@@ -77,6 +78,7 @@ We wanted to build a tool that would allow non-technical users to format and per
     - AWS storage 
     - Google Cloud Storage 
     - Live Feed APIs 
+- Additional stream capabilites like joins
 - More performance optimizations
 
     
@@ -93,16 +95,11 @@ We wanted to build a tool that would allow non-technical users to format and per
  ## Troubleshooting
 Connection issues:
 
-In case of kafka server connection issues,
-
-try: 
-- open "server.properties" file that kafka uses to start the server
+In case of kafka server connection issues try: 
+- opening the "server.properties" file that kafka uses to start the server
 - find "listeners = PLAINTEXT://your.host.name:9092" and uncomment it
 
 ## Running Example Configurations
 
 #### MySQL Song Database Example
-Included in the submission is a mysql database titled songs. 
-
-
-#### CSV Flight Data Example
+Included in the submission is a sqlite database file titled songs.db with a table called songs. Feel free to load in your own database file and change the config.txt accordingly. 
